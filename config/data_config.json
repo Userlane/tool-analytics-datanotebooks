@@ -1,0 +1,5 @@
+{
+    "days": 30,
+    "count": 100,
+    "important_events": ["changeUrl", "click", "rightClick"]
+}

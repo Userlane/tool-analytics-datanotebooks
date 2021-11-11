@@ -1,0 +1,7 @@
+{
+    "clickhouse_host" : "localhost",
+    "clickhouse_user" : "admin",
+    "clickhouse_password" : "adUslnPass245",
+    "clickhouse_port" : "9000",
+    "clickhouse_database" : "UnderlyingAppAnalytics"
+}
