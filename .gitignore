@@ -2,3 +2,4 @@
 .vscode/
 data/
 images/
+*.cpython-38.pyc

@@ -12,7 +12,7 @@ from sklearn.preprocessing import StandardScaler, Normalizer
 
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 ##
 ## functions
@@ -28,9 +28,6 @@ def cluster_centers_and_plot_Kmeans(df, clu_num, scale = True, normalize = "l2")
         scalar.fit(df_num)
         df_scale = pd.DataFrame(scalar.transform(df_num))
 
-        kmeans = KMeans(init="random", n_clusters=5, n_init=4, random_state=0)
-        kmeans.fit(df_scale)
-
         sessionTimeMean = np.mean(df_num.sessionTime)
         sessionTimeStd = np.std(df_num.sessionTime)
         importantEventCountMean = np.mean(df_num.importantEventCount)
@@ -38,10 +35,14 @@ def cluster_centers_and_plot_Kmeans(df, clu_num, scale = True, normalize = "l2")
 
         sessionTime = (df_scale[0] * sessionTimeStd + sessionTimeMean)
         importantEventCount = (df_scale[1] * importantEventCountStd + importantEventCountMean)
-        
+
+        kmeans = KMeans(init="random", n_clusters=5, n_init=4, random_state=0)
+        kmeans.fit(df_scale)
+
         cluster_centers = pd.DataFrame({
-        "SessionTimeCenter": kmeans.cluster_centers_[:,0] * sessionTimeStd + sessionTimeMean,
-        "EventCountCenter" : kmeans.cluster_centers_[:,1] * importantEventCountStd + importantEventCountMean
+            "ClusterLabel": range(0,5),
+            "SessionTimeCenter": kmeans.cluster_centers_[:,0] * sessionTimeStd + sessionTimeMean,
+            "EventCountCenter" : kmeans.cluster_centers_[:,1] * importantEventCountStd + importantEventCountMean
         })
 
     else:
@@ -76,30 +77,31 @@ def cluster_centers_and_plot_Kmeans(df, clu_num, scale = True, normalize = "l2")
         kmeans.fit(df_norm)
 
         cluster_centers = pd.DataFrame({
-        "SessionTimeCenter": kmeans.cluster_centers_[:,0] * sessionTimeNorm,
-        "EventCountCenter" : kmeans.cluster_centers_[:,1] * importantEventCountNorm
+            "ClusterLabel": range(0,5),
+            "SessionTimeCenter": kmeans.cluster_centers_[:,0] * sessionTimeNorm,
+            "EventCountCenter" : kmeans.cluster_centers_[:,1] * importantEventCountNorm
         })
 
+    df_user_labels = pd.DataFrame({
+        "ForeignUserId": df.foreignUserId,
+        "ClusterLabel": kmeans.labels_,
+        "SessionTime": sessionTime,
+        "EventCount": importantEventCount
         
-    df_final = pd.DataFrame({
-    "SessionTime": sessionTime,
-    "EventCount": importantEventCount,
-    "ClusterLabel": kmeans.labels_
     })
-    
-
 
     # plot
-    plt.scatter(
-      df_final["SessionTime"], 
-      df_final["EventCount"], 
-      c = df_final["ClusterLabel"],
-           )
-    plt.scatter(
-      cluster_centers["SessionTimeCenter"],
-      cluster_centers["EventCountCenter"],
-      c = "red"
-    )
+    # plt.scatter(
+    #   df_user_labels["SessionTime"], 
+    #   df_user_labels["EventCount"], 
+    #   c = df_user_labels["ClusterLabel"],
+    # )
+
+    # plt.scatter(
+    #   cluster_centers["SessionTimeCenter"],
+    #   cluster_centers["EventCountCenter"],
+    #   c = "red"
+    # )
 
         # logic to create lines between clusters
     #cluster_centers = cluster_centers.sort_values(["EventCountCenter"])
@@ -131,8 +133,8 @@ def cluster_centers_and_plot_Kmeans(df, clu_num, scale = True, normalize = "l2")
     #         c = "red"
     #       )
 
-    plt.xlabel("SessionTime")
-    plt.ylabel("EventCount")
-    plt.show()
+    # plt.xlabel("SessionTime")
+    # plt.ylabel("EventCount")
+    # plt.show()
     
-    return cluster_centers
+    return cluster_centers, df_user_labels
