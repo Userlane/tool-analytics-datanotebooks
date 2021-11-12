@@ -17,7 +17,7 @@ from sklearn.decomposition import PCA
 ##
 ## functions
 ##
-def cluster_centers_and_plot_Kmeans(df, clu_num, scale = True, normalize = "l2"):
+def cluster_centers_and_plot_Kmeans(df, clu_num = 5, scale = True, normalize = "l2"):
     """
     Receive Dataset -> Kmeans Clustering -> Cluster Center Results + Cluster Labels
     """
